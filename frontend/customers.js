@@ -3,6 +3,16 @@ function getCustomers() {
   return data ? JSON.parse(data) : [];
 }
 
+function getLoans() {
+  const data = localStorage.getItem("loans");
+  return data ? JSON.parse(data) : [];
+}
+
+function getCustomerBalance(customerId) {
+  const loans = getLoans().filter((l) => String(l.customerId) === String(customerId));
+  return loans.reduce((sum, l) => sum + Number(l.amount), 0);
+}
+
 function renderCustomers(filter = "") {
   const list = document.getElementById("customerList");
   const emptyMsg = document.getElementById("emptyMsg");
@@ -25,6 +35,7 @@ function renderCustomers(filter = "") {
   }
 
   filtered.forEach((c) => {
+    const balance = getCustomerBalance(c.id);
     const card = document.createElement("a");
     card.href = `customer-detail.html?id=${c.id}`;
     card.className = "block bg-white rounded-xl shadow p-4 flex justify-between items-center";
@@ -33,7 +44,7 @@ function renderCustomers(filter = "") {
         <p class="font-semibold text-opay-navy">${c.name}</p>
         <p class="text-sm text-gray-500">${c.phone || "No phone"}</p>
       </div>
-      <p class="font-bold text-opay-navy">₦0</p>
+      <p class="font-bold text-opay-navy">₦${balance.toLocaleString()}</p>
     `;
     list.appendChild(card);
   });

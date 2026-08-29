@@ -17,10 +17,9 @@ function renderLoans(customerId) {
 
   if (loans.length === 0) {
     noLoansMsg.classList.remove("hidden");
-    return;
+  } else {
+    noLoansMsg.classList.add("hidden");
   }
-
-  noLoansMsg.classList.add("hidden");
 
   loans.forEach((loan) => {
     const card = document.createElement("div");
@@ -31,6 +30,9 @@ function renderLoans(customerId) {
     `;
     loanList.appendChild(card);
   });
+
+  const total = loans.reduce((sum, l) => sum + Number(l.amount), 0);
+  document.getElementById("outstandingBalance").textContent = `₦${total.toLocaleString()}`;
 }
 
 function loadCustomer() {
