@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Add Customer</title>
+  <link href="./output.css" rel="stylesheet" />
+</head>
+<body class="bg-gray-100 min-h-screen">
+  <div class="max-w-sm mx-auto p-6">
+    <h1 class="text-2xl font-bold text-opay-navy">Add Customer</h1>
+
+    <div class="mt-6">
+      <label class="text-sm text-gray-600">Name</label>
+      <input
+        id="nameInput"
+        type="text"
+        placeholder="e.g. Musa Ibrahim"
+        class="w-full mt-1 p-3 rounded-xl border border-gray-300 focus:outline-none focus:border-opay-green"
+      />
+      <p id="nameError" class="text-red-500 text-sm mt-1 hidden">Name is required</p>
+    </div>
+
+    <div class="mt-4">
+      <label class="text-sm text-gray-600">Phone (optional)</label>
+      <input
+        id="phoneInput"
+        type="tel"
+        placeholder="e.g. 08012345678"
+        class="w-full mt-1 p-3 rounded-xl border border-gray-300 focus:outline-none focus:border-opay-green"
+      />
+    </div>
+
+    <div class="mt-4">
+      <label class="text-sm text-gray-600">Address (optional)</label>
+      <input
+        id="addressInput"
+        type="text"
+        placeholder="e.g. 12 Market Road"
+        class="w-full mt-1 p-3 rounded-xl border border-gray-300 focus:outline-none focus:border-opay-green"
+      />
+    </div>
+
+    <button
+      id="saveBtn"
+      class="w-full mt-6 bg-opay-green text-white py-3 rounded-xl font-semibold"
+    >Save</button>
+
+    <a href="customers.html" class="block text-center text-gray-500 mt-4">Cancel</a>
+  </div>
+
+  <script src="./add-customer.js"></script>
+</body>
+</html>
