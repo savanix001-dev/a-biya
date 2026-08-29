@@ -35,6 +35,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     errorMsg.classList.add("hidden");
-    alert("Code entered: " + code + "\n(Next step will verify this with the backend)");
+    window.location.href = "create-pin.html";
   });
 });
