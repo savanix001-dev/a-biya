@@ -59,6 +59,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     sessionStorage.setItem("loginPin", pin);
-    alert("PIN created successfully!\n(Next: Business Profile screen)");
+    window.location.href = "profile.html";
   });
 });

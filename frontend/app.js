@@ -21,7 +21,7 @@ document.addEventListener("DOMContentLoaded", () => {
     phoneInput.classList.remove("border-red-500");
 
     // Save the phone number temporarily so the next screen can show it
-    sessionStorage.setItem("phoneNumber", phone);
+    localStorage.setItem("phoneNumber", phone);
 
     // Go to the OTP screen
     window.location.href = "otp.html";
