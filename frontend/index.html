@@ -10,7 +10,23 @@
   <div class="bg-white p-8 rounded-2xl shadow-md w-full max-w-sm">
     <h1 class="text-2xl font-bold text-center text-opay-navy">Welcome</h1>
     <p class="text-center text-gray-500 mt-2">Enter your phone number to continue</p>
-    <button class="mt-6 w-full bg-opay-green text-white font-semibold py-3 rounded-xl">Continue</button>
+
+    <input
+      id="phoneInput"
+      type="tel"
+      placeholder="080XXXXXXXX"
+      maxlength="11"
+      class="mt-6 w-full border border-gray-300 rounded-xl px-4 py-3 text-center text-lg tracking-wide focus:outline-none focus:ring-2 focus:ring-opay-green"
+    />
+
+    <p id="errorMsg" class="text-red-500 text-sm text-center mt-2 hidden">Please enter a valid 11-digit phone number</p>
+
+    <button
+      id="continueBtn"
+      class="mt-4 w-full bg-opay-green text-white font-semibold py-3 rounded-xl active:opacity-80"
+    >Continue</button>
   </div>
+
+  <script src="./app.js"></script>
 </body>
 </html>

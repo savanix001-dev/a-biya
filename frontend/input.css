@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@source "./app.js";
 
 @theme {
   --color-opay-green: #1DCF9F;
