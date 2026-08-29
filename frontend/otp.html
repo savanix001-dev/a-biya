@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Verify Code</title>
+  <link href="./output.css" rel="stylesheet" />
+</head>
+<body class="bg-gray-100 min-h-screen flex items-center justify-center">
+  <div class="bg-white p-8 rounded-2xl shadow-md w-full max-w-sm">
+    <h1 class="text-2xl font-bold text-center text-opay-navy">Enter Code</h1>
+    <p id="phoneDisplay" class="text-center text-gray-500 mt-2 text-sm"></p>
+
+    <div class="flex justify-between gap-2 mt-6">
+      <input type="tel" maxlength="1" class="otp-box w-12 h-14 text-center text-xl border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-opay-green" />
+      <input type="tel" maxlength="1" class="otp-box w-12 h-14 text-center text-xl border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-opay-green" />
+      <input type="tel" maxlength="1" class="otp-box w-12 h-14 text-center text-xl border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-opay-green" />
+      <input type="tel" maxlength="1" class="otp-box w-12 h-14 text-center text-xl border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-opay-green" />
+      <input type="tel" maxlength="1" class="otp-box w-12 h-14 text-center text-xl border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-opay-green" />
+      <input type="tel" maxlength="1" class="otp-box w-12 h-14 text-center text-xl border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-opay-green" />
+    </div>
+
+    <p id="errorMsg" class="text-red-500 text-sm text-center mt-3 hidden">Please enter the 6-digit code</p>
+
+    <button id="verifyBtn" class="mt-6 w-full bg-opay-green text-white font-semibold py-3 rounded-xl active:opacity-80">Verify</button>
+
+    <p class="text-center text-gray-400 text-sm mt-4">Didn't get the code? <span class="text-opay-green font-medium">Resend</span></p>
+  </div>
+
+  <script src="./otp.js"></script>
+</body>
+</html>

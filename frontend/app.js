@@ -20,6 +20,10 @@ document.addEventListener("DOMContentLoaded", () => {
     errorMsg.classList.add("hidden");
     phoneInput.classList.remove("border-red-500");
 
-    alert("Phone number valid: " + phone + "\n(Next step will be sending OTP)");
+    // Save the phone number temporarily so the next screen can show it
+    sessionStorage.setItem("phoneNumber", phone);
+
+    // Go to the OTP screen
+    window.location.href = "otp.html";
   });
 });
