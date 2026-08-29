@@ -25,8 +25,9 @@ function renderCustomers(filter = "") {
   }
 
   filtered.forEach((c) => {
-    const card = document.createElement("div");
-    card.className = "bg-white rounded-xl shadow p-4 flex justify-between items-center";
+    const card = document.createElement("a");
+    card.href = `customer-detail.html?id=${c.id}`;
+    card.className = "block bg-white rounded-xl shadow p-4 flex justify-between items-center";
     card.innerHTML = `
       <div>
         <p class="font-semibold text-opay-navy">${c.name}</p>

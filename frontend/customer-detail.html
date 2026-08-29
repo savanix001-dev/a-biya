@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Customer Detail</title>
+  <link href="./output.css" rel="stylesheet" />
+</head>
+<body class="bg-gray-100 min-h-screen pb-20">
+  <div class="max-w-sm mx-auto p-6">
+    <a href="customers.html" class="text-opay-green text-sm">&larr; Back</a>
+
+    <h1 id="customerName" class="text-2xl font-bold text-opay-navy mt-2"></h1>
+    <p id="customerPhone" class="text-gray-500 mt-1"></p>
+    <p id="customerAddress" class="text-gray-500"></p>
+
+    <div class="bg-white rounded-2xl shadow-md p-6 mt-6">
+      <p class="text-gray-500 text-sm">Outstanding Balance</p>
+      <p class="text-3xl font-bold text-opay-navy mt-1">₦0</p>
+    </div>
+
+    <h2 class="text-lg font-semibold text-opay-navy mt-6">Loans</h2>
+    <p id="noLoansMsg" class="text-gray-400 mt-2">No loans yet.</p>
+  </div>
+
+  <nav class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 flex justify-around py-3">
+    <a href="dashboard.html" class="text-gray-400 text-sm">Home</a>
+    <a href="customers.html" class="text-opay-green font-semibold text-sm">Customers</a>
+    <a href="#" class="text-gray-400 text-sm">Reports</a>
+    <a href="#" class="text-gray-400 text-sm">More</a>
+  </nav>
+
+  <script src="./customer-detail.js"></script>
+</body>
+</html>
