@@ -1,4 +1,10 @@
 document.addEventListener("DOMContentLoaded", () => {
+  if (localStorage.getItem("phoneNumber") && localStorage.getItem("loginPin")) {
+    window.location.href = "login-pin.html";
+  }
+});
+
+document.addEventListener("DOMContentLoaded", () => {
   const phoneInput = document.getElementById("phoneInput");
   const errorMsg = document.getElementById("errorMsg");
   const continueBtn = document.getElementById("continueBtn");

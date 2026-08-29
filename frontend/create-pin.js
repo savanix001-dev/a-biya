@@ -58,7 +58,7 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    sessionStorage.setItem("loginPin", pin);
+    localStorage.setItem("loginPin", pin);
     window.location.href = "profile.html";
   });
 });
