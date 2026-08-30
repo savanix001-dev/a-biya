@@ -136,6 +136,7 @@ function renderHistory(customerId) {
         </div>
         <p class="font-semibold text-opay-navy mt-1">₦${entry.amount}</p>
         <p class="text-sm text-gray-500">Due: ${entry.dueDate || "No due date"}</p>
+        ${entry.item ? `<p class="text-sm text-gray-500">Item: ${entry.item}</p>` : ""}
         <p class="text-xs text-gray-400 mt-1">${formatTimestamp(entry.createdAt)}</p>
         ${reminderBtn}
       `;

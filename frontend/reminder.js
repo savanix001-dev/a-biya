@@ -10,11 +10,11 @@ const { loanId, customerId } = getParams();
 document.getElementById("backBtn").href = `customer-detail.html?id=${customerId}`;
 
 const templates = {
-  english: "Hello [Customer Name], this is a friendly reminder that your payment of ₦[Amount] was due on [Due Date] and is currently overdue. Please kindly make the payment as soon as possible. If you have already made the payment, please disregard this message. Thank you.",
-  hausa: "Sannu [Customer Name], wannan tunatarwa ce cewa biyan kuɗin ₦[Amount] da ya kamata a biya ranar [Due Date] ya wuce. Don Allah a yi ƙoƙarin biyan kuɗin da wuri. Idan kun riga kun biya, ku yi watsi da wannan saƙon. Na gode.",
-  yoruba: "Ẹ káàrọ̀ [Customer Name], a fẹ́ rán yín létí pé owó ₦[Amount] tí ẹ yẹ kí ẹ san ní [Due Date] ti pé. Ẹ jọ̀ọ́, ẹ gbìyànjú láti san owó náà ní kíákíá. Tí ẹ bá ti san án tẹ́lẹ̀, ẹ má ṣe kọbi ara sí ìránṣẹ́ yìí. Ẹ ṣé.",
-  igbo: "Ndewo [Customer Name], nke a bụ ncheta na ụgwọ ₦[Amount] nke a tụrụ anya ka ị kwụọ na [Due Date] agafeela. Biko, gbalịa kwụọ ụgwọ ahụ ozugbo enwere ike. Ọ bụrụ na ị kwụọla ụgwọ ahụ, biko leghara ozi a anya. Daalụ.",
-  pidgin: "Hello [Customer Name], na small reminder say your payment of ₦[Amount] wey you suppose pay on [Due Date] don pass due date. Abeg try make the payment as soon as you fit. If you don already pay, abeg ignore this message. Thank you.",
+  english: "Hello [Customer Name], this is a friendly reminder that your payment of ₦[Amount] was due on [Due Date] and is currently overdue. Please kindly make the payment as soon as possible. Thank you.",
+  hausa: "Sannu [Customer Name], wannan tunatarwa ce cewa biyan kuɗin ₦[Amount] da ya kamata a biya ranar [Due Date] ya wuce. Don Allah a yi ƙoƙarin biyan kuɗin da wuri. Na gode.",
+  yoruba: "Ẹ káàrọ̀ [Customer Name], a fẹ́ rán yín létí pé owó ₦[Amount] tí ẹ yẹ kí ẹ san ní [Due Date] ti pé. Ẹ jọ̀ọ́, ẹ gbìyànjú láti san owó náà ní kíákíá. Ẹ ṣé.",
+  igbo: "Ndewo [Customer Name], nke a bụ ncheta na ụgwọ ₦[Amount] nke a tụrụ anya ka ị kwụọ na [Due Date] agafeela. Biko, gbalịa kwụọ ụgwọ ahụ ozugbo enwere ike. Daalụ.",
+  pidgin: "Hello [Customer Name], na small reminder say your payment of ₦[Amount] wey you suppose pay on [Due Date] don pass due date. Abeg try make the payment as soon as you fit. Thank you.",
 };
 
 function getCustomer() {
@@ -32,10 +32,16 @@ function buildMessage(language) {
   const loan = getLoan();
   const template = templates[language];
 
-  return template
+  let message = template
     .replaceAll("[Customer Name]", customer ? customer.name : "Customer")
     .replaceAll("[Amount]", loan ? loan.amount : "0")
     .replaceAll("[Due Date]", loan ? loan.dueDate : "");
+
+  if (loan && loan.item) {
+    message += `\n\nItem: ${loan.item}`;
+  }
+
+  return message;
 }
 
 function loadReminder() {

@@ -8,11 +8,13 @@ document.getElementById("cancelBtn").href = `customer-detail.html?id=${customerI
 
 document.getElementById("saveBtn").addEventListener("click", () => {
   const amountInput = document.getElementById("amountInput");
+  const itemInput = document.getElementById("itemInput");
   const dateGivenInput = document.getElementById("dateGivenInput");
   const dueDateInput = document.getElementById("dueDateInput");
   const amountError = document.getElementById("amountError");
 
   const amount = amountInput.value.trim();
+  const item = itemInput.value.trim();
   const dateGiven = dateGivenInput.value;
   const dueDate = dueDateInput.value;
 
@@ -29,6 +31,7 @@ document.getElementById("saveBtn").addEventListener("click", () => {
     id: Date.now(),
     customerId: customerId,
     amount: amount,
+    item: item || null,
     dateGiven: dateGiven || new Date().toISOString().split("T")[0],
     dueDate: dueDate || null,
     createdAt: new Date().toISOString(),
