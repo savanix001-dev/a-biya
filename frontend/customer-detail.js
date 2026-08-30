@@ -93,6 +93,7 @@ function loadCustomer() {
   document.getElementById("editBtn").href = `edit-customer.html?id=${customer.id}`;
   document.getElementById("addLoanBtn").href = `add-loan.html?customerId=${customer.id}`;
   document.getElementById("recordPaymentBtn").href = `record-payment.html?customerId=${customer.id}`;
+  document.getElementById("statementBtn").href = `statement.html?customerId=${customer.id}`;
 
   document.getElementById("deleteBtn").addEventListener("click", () => {
     const confirmed = confirm(`Delete ${customer.name}? This will also delete all their loans and payments. This cannot be undone.`);

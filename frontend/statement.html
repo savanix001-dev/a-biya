@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Statement</title>
+  <link href="./output.css" rel="stylesheet" />
+</head>
+<body class="bg-gray-100 min-h-screen">
+  <div class="max-w-sm mx-auto p-6">
+
+    <div id="filterSection">
+      <h1 class="text-2xl font-bold text-opay-navy">Generate Statement</h1>
+      <p id="customerNameLabel" class="text-gray-500 mt-1"></p>
+
+      <div class="mt-6">
+        <label class="text-sm text-gray-600">From Date</label>
+        <input
+          id="fromDateInput"
+          type="date"
+          class="w-full mt-1 p-3 rounded-xl border border-gray-300 focus:outline-none focus:border-opay-green"
+        />
+      </div>
+
+      <div class="mt-4">
+        <label class="text-sm text-gray-600">To Date</label>
+        <input
+          id="toDateInput"
+          type="date"
+          class="w-full mt-1 p-3 rounded-xl border border-gray-300 focus:outline-none focus:border-opay-green"
+        />
+      </div>
+
+      <button
+        id="generateBtn"
+        class="w-full mt-6 bg-opay-green text-white py-3 rounded-xl font-semibold"
+      >View Statement</button>
+
+      <a id="backBtn" href="#" class="block text-center text-gray-500 mt-4">Back</a>
+    </div>
+
+    <div id="statementView" class="hidden">
+      <h1 class="text-2xl font-bold text-opay-navy">Loan Statement</h1>
+      <p id="statementCustomerName" class="text-gray-600 mt-1 font-semibold"></p>
+      <p id="statementCustomerPhone" class="text-gray-500 text-sm"></p>
+      <p id="statementPeriod" class="text-gray-500 text-sm mt-1"></p>
+
+      <div id="statementList" class="mt-4 space-y-2"></div>
+
+      <div class="bg-white rounded-xl shadow p-4 mt-4">
+        <p class="text-sm text-gray-500">Total Loaned (this period)</p>
+        <p id="statementTotalLoaned" class="font-bold text-opay-navy">₦0</p>
+        <p class="text-sm text-gray-500 mt-2">Total Paid (this period)</p>
+        <p id="statementTotalPaid" class="font-bold text-opay-navy">₦0</p>
+        <p class="text-sm text-gray-500 mt-2">Current Overall Balance</p>
+        <p id="statementBalance" class="font-bold text-opay-navy">₦0</p>
+      </div>
+
+      <button
+        id="printBtn"
+        class="w-full mt-6 bg-opay-navy text-white py-3 rounded-xl font-semibold"
+      >Share / Save as PDF</button>
+
+      <button id="editFilterBtn" class="block w-full text-center text-gray-500 mt-4">Change Date Range</button>
+    </div>
+
+  </div>
+
+  <script src="./statement.js"></script>
+</body>
+</html>
