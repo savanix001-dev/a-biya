@@ -19,51 +19,55 @@ function formatTimestamp(isoString) {
   return d.toLocaleString();
 }
 
-function renderLoans(customerId) {
-  const loans = getLoans().filter((l) => String(l.customerId) === String(customerId));
-  const payments = getPayments().filter((p) => String(p.customerId) === String(customerId));
+function renderHistory(customerId) {
+  const loans = getLoans()
+    .filter((l) => String(l.customerId) === String(customerId))
+    .map((l) => ({ type: "loan", ...l }));
 
-  const loanList = document.getElementById("loanList");
-  const noLoansMsg = document.getElementById("noLoansMsg");
+  const payments = getPayments()
+    .filter((p) => String(p.customerId) === String(customerId))
+    .map((p) => ({ type: "payment", ...p }));
 
-  loanList.innerHTML = "";
+  const history = [...loans, ...payments].sort(
+    (a, b) => new Date(a.createdAt || 0) - new Date(b.createdAt || 0)
+  );
 
-  if (loans.length === 0) {
-    noLoansMsg.classList.remove("hidden");
+  const historyList = document.getElementById("historyList");
+  const noHistoryMsg = document.getElementById("noHistoryMsg");
+
+  historyList.innerHTML = "";
+
+  if (history.length === 0) {
+    noHistoryMsg.classList.remove("hidden");
   } else {
-    noLoansMsg.classList.add("hidden");
+    noHistoryMsg.classList.add("hidden");
   }
 
-  loans.forEach((loan) => {
+  history.forEach((entry) => {
     const card = document.createElement("div");
-    card.className = "bg-white rounded-xl shadow p-4";
-    card.innerHTML = `
-      <p class="font-semibold text-opay-navy">₦${loan.amount}</p>
-      <p class="text-sm text-gray-500">Due: ${loan.dueDate || "No due date"}</p>
-      <p class="text-xs text-gray-400 mt-1">Added: ${formatTimestamp(loan.createdAt)}</p>
-    `;
-    loanList.appendChild(card);
-  });
 
-  const paymentList = document.getElementById("paymentList");
-  const noPaymentsMsg = document.getElementById("noPaymentsMsg");
+    if (entry.type === "loan") {
+      card.className = "bg-green-50 border border-opay-green rounded-xl p-4";
+      const reminderBtn = entry.dueDate
+        ? `<a href="reminder.html?loanId=${entry.id}&customerId=${customerId}" class="block text-center bg-opay-navy text-white text-sm mt-3 py-2 rounded-xl font-semibold">Send Reminder</a>`
+        : "";
+      card.innerHTML = `
+        <p class="text-xs font-semibold text-opay-green uppercase">Loan Given</p>
+        <p class="font-semibold text-opay-navy mt-1">₦${entry.amount}</p>
+        <p class="text-sm text-gray-500">Due: ${entry.dueDate || "No due date"}</p>
+        <p class="text-xs text-gray-400 mt-1">${formatTimestamp(entry.createdAt)}</p>
+        ${reminderBtn}
+      `;
+    } else {
+      card.className = "bg-orange-50 border border-orange-400 rounded-xl p-4";
+      card.innerHTML = `
+        <p class="text-xs font-semibold text-orange-500 uppercase">Payment Received</p>
+        <p class="font-semibold text-opay-navy mt-1">₦${entry.amount}</p>
+        <p class="text-xs text-gray-400 mt-1">${formatTimestamp(entry.createdAt)}</p>
+      `;
+    }
 
-  paymentList.innerHTML = "";
-
-  if (payments.length === 0) {
-    noPaymentsMsg.classList.remove("hidden");
-  } else {
-    noPaymentsMsg.classList.add("hidden");
-  }
-
-  payments.forEach((payment) => {
-    const card = document.createElement("div");
-    card.className = "bg-white rounded-xl shadow p-4";
-    card.innerHTML = `
-      <p class="font-semibold text-opay-navy">₦${payment.amount}</p>
-      <p class="text-xs text-gray-400 mt-1">Paid: ${formatTimestamp(payment.createdAt)}</p>
-    `;
-    paymentList.appendChild(card);
+    historyList.appendChild(card);
   });
 
   const totalLoaned = loans.reduce((sum, l) => sum + Number(l.amount), 0);
@@ -89,7 +93,7 @@ function loadCustomer() {
   document.getElementById("addLoanBtn").href = `add-loan.html?customerId=${customer.id}`;
   document.getElementById("recordPaymentBtn").href = `record-payment.html?customerId=${customer.id}`;
 
-  renderLoans(customer.id);
+  renderHistory(customer.id);
 }
 
 loadCustomer();

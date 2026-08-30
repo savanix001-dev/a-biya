@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Send Reminder</title>
+  <link href="./output.css" rel="stylesheet" />
+</head>
+<body class="bg-gray-100 min-h-screen">
+  <div class="max-w-sm mx-auto p-6">
+    <h1 class="text-2xl font-bold text-opay-navy">Send Reminder</h1>
+    <p id="customerNameLabel" class="text-gray-500 mt-1"></p>
+
+    <div class="mt-6">
+      <label class="text-sm text-gray-600">Language</label>
+      <select
+        id="languageSelect"
+        class="w-full mt-1 p-3 rounded-xl border border-gray-300 focus:outline-none focus:border-opay-green"
+      >
+        <option value="english">English</option>
+        <option value="hausa">Hausa</option>
+        <option value="yoruba">Yoruba</option>
+        <option value="igbo">Igbo</option>
+        <option value="pidgin">Pidgin</option>
+      </select>
+    </div>
+
+    <div class="mt-4">
+      <label class="text-sm text-gray-600">Message (you can edit this)</label>
+      <textarea
+        id="messageInput"
+        rows="7"
+        class="w-full mt-1 p-3 rounded-xl border border-gray-300 focus:outline-none focus:border-opay-green"
+      ></textarea>
+    </div>
+
+    <div id="phoneSection" class="mt-4 hidden">
+      <label class="text-sm text-gray-600">Customer's WhatsApp Number</label>
+      <input
+        id="phoneInput"
+        type="tel"
+        placeholder="e.g. 08012345678"
+        class="w-full mt-1 p-3 rounded-xl border border-gray-300 focus:outline-none focus:border-opay-green"
+      />
+    </div>
+
+    <button
+      id="sendBtn"
+      class="w-full mt-6 bg-opay-green text-white py-3 rounded-xl font-semibold"
+    >Send via WhatsApp</button>
+
+    <a id="backBtn" href="#" class="block text-center text-gray-500 mt-4">Back</a>
+  </div>
+
+  <script src="./reminder.js"></script>
+</body>
+</html>
