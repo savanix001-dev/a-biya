@@ -8,7 +8,10 @@
 </head>
 <body class="bg-gray-100 min-h-screen pb-20">
   <div class="max-w-sm mx-auto p-6">
-    <a href="customers.html" class="text-opay-green text-sm">&larr; Back</a>
+    <div class="flex justify-between items-center">
+      <a href="customers.html" class="text-opay-green text-sm">&larr; Back</a>
+      <a id="editBtn" href="#" class="text-opay-navy text-sm font-semibold">Edit</a>
+    </div>
 
     <h1 id="customerName" class="text-2xl font-bold text-opay-navy mt-2"></h1>
     <p id="customerPhone" class="text-gray-500 mt-1"></p>
@@ -27,6 +30,8 @@
 
     <div id="historyList" class="mt-3 space-y-3"></div>
     <p id="noHistoryMsg" class="text-gray-400 mt-4">No history yet.</p>
+
+    <button id="deleteBtn" class="w-full mt-8 text-red-500 text-sm font-semibold py-2">Delete Customer</button>
   </div>
 
   <nav class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 flex justify-around py-3">

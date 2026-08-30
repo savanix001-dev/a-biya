@@ -90,8 +90,37 @@ function loadCustomer() {
   document.getElementById("customerPhone").textContent = customer.phone || "No phone";
   document.getElementById("customerAddress").textContent = customer.address || "";
 
+  document.getElementById("editBtn").href = `edit-customer.html?id=${customer.id}`;
   document.getElementById("addLoanBtn").href = `add-loan.html?customerId=${customer.id}`;
   document.getElementById("recordPaymentBtn").href = `record-payment.html?customerId=${customer.id}`;
+
+  document.getElementById("deleteBtn").addEventListener("click", () => {
+    const confirmed = confirm(`Delete ${customer.name}? This will also delete all their loans and payments. This cannot be undone.`);
+    if (!confirmed) return;
+
+    const pin = prompt("Enter your PIN to confirm deletion:");
+    if (pin === null) return;
+
+    const savedPin = localStorage.getItem("loginPin");
+    if (pin !== savedPin) {
+      alert("Incorrect PIN. Customer was not deleted.");
+      return;
+    }
+
+    const customers = JSON.parse(localStorage.getItem("customers") || "[]");
+    const updatedCustomers = customers.filter((c) => String(c.id) !== String(customer.id));
+    localStorage.setItem("customers", JSON.stringify(updatedCustomers));
+
+    const loans = JSON.parse(localStorage.getItem("loans") || "[]");
+    const updatedLoans = loans.filter((l) => String(l.customerId) !== String(customer.id));
+    localStorage.setItem("loans", JSON.stringify(updatedLoans));
+
+    const payments = JSON.parse(localStorage.getItem("payments") || "[]");
+    const updatedPayments = payments.filter((p) => String(p.customerId) !== String(customer.id));
+    localStorage.setItem("payments", JSON.stringify(updatedPayments));
+
+    window.location.href = "customers.html";
+  });
 
   renderHistory(customer.id);
 }
