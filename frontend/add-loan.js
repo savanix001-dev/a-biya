@@ -31,6 +31,7 @@ document.getElementById("saveBtn").addEventListener("click", () => {
     amount: amount,
     dateGiven: dateGiven || new Date().toISOString().split("T")[0],
     dueDate: dueDate || null,
+    createdAt: new Date().toISOString(),
   });
 
   localStorage.setItem("loans", JSON.stringify(loans));

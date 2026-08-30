@@ -17,6 +17,7 @@
     <div class="bg-white rounded-2xl shadow-md p-6 mt-6">
       <p class="text-gray-500 text-sm">Outstanding Balance</p>
       <p id="outstandingBalance" class="text-3xl font-bold text-opay-navy mt-1">₦0</p>
+      <a id="recordPaymentBtn" href="#" class="block text-center bg-red-500 text-white mt-4 py-2 rounded-xl font-semibold">Record Payment</a>
     </div>
 
     <div class="flex justify-between items-center mt-6">
@@ -26,6 +27,10 @@
 
     <div id="loanList" class="mt-3 space-y-3"></div>
     <p id="noLoansMsg" class="text-gray-400 mt-4">No loans yet.</p>
+
+    <h2 class="text-lg font-semibold text-opay-navy mt-6">Payment History</h2>
+    <div id="paymentList" class="mt-3 space-y-3"></div>
+    <p id="noPaymentsMsg" class="text-gray-400 mt-4">No payments yet.</p>
   </div>
 
   <nav class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 flex justify-around py-3">

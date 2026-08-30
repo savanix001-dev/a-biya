@@ -8,9 +8,17 @@ function getLoans() {
   return data ? JSON.parse(data) : [];
 }
 
+function getPayments() {
+  const data = localStorage.getItem("payments");
+  return data ? JSON.parse(data) : [];
+}
+
 function getCustomerBalance(customerId) {
   const loans = getLoans().filter((l) => String(l.customerId) === String(customerId));
-  return loans.reduce((sum, l) => sum + Number(l.amount), 0);
+  const payments = getPayments().filter((p) => String(p.customerId) === String(customerId));
+  const totalLoaned = loans.reduce((sum, l) => sum + Number(l.amount), 0);
+  const totalPaid = payments.reduce((sum, p) => sum + Number(p.amount), 0);
+  return totalLoaned - totalPaid;
 }
 
 function renderCustomers(filter = "") {
