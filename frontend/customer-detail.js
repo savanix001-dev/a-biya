@@ -123,9 +123,7 @@ function renderHistory(customerId) {
 
     if (entry.type === "loan") {
       card.className = "bg-green-50 border border-opay-green rounded-xl p-4";
-      const reminderBtn = entry.dueDate
-        ? `<a href="reminder.html?loanId=${entry.id}&customerId=${customerId}" class="block text-center bg-opay-navy text-white text-sm mt-3 py-2 rounded-xl font-semibold">Send Reminder</a>`
-        : "";
+      const reminderBtn = `<a href="reminder.html?loanId=${entry.id}&customerId=${customerId}" class="block text-center bg-opay-navy text-white text-sm mt-3 py-2 rounded-xl font-semibold">Send Reminder</a>`;
       card.innerHTML = `
         <div class="flex justify-between items-start">
           <p class="text-xs font-semibold text-opay-green uppercase">Loan Given</p>

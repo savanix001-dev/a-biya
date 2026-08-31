@@ -9,12 +9,20 @@ function getParams() {
 const { loanId, customerId } = getParams();
 document.getElementById("backBtn").href = `customer-detail.html?id=${customerId}`;
 
-const templates = {
+const templatesWithDueDate = {
   english: "Hello [Customer Name], this is a friendly reminder that your payment of ₦[Amount] was due on [Due Date] and is currently overdue. Please kindly make the payment as soon as possible. Thank you.",
   hausa: "Sannu [Customer Name], wannan tunatarwa ce cewa biyan kuɗin ₦[Amount] da ya kamata a biya ranar [Due Date] ya wuce. Don Allah a yi ƙoƙarin biyan kuɗin da wuri. Na gode.",
   yoruba: "Ẹ káàrọ̀ [Customer Name], a fẹ́ rán yín létí pé owó ₦[Amount] tí ẹ yẹ kí ẹ san ní [Due Date] ti pé. Ẹ jọ̀ọ́, ẹ gbìyànjú láti san owó náà ní kíákíá. Ẹ ṣé.",
   igbo: "Ndewo [Customer Name], nke a bụ ncheta na ụgwọ ₦[Amount] nke a tụrụ anya ka ị kwụọ na [Due Date] agafeela. Biko, gbalịa kwụọ ụgwọ ahụ ozugbo enwere ike. Daalụ.",
   pidgin: "Hello [Customer Name], na small reminder say your payment of ₦[Amount] wey you suppose pay on [Due Date] don pass due date. Abeg try make the payment as soon as you fit. Thank you.",
+};
+
+const templatesNoDueDate = {
+  english: "Hello [Customer Name], this is a friendly reminder that you have an outstanding payment of ₦[Amount]. Please kindly make the payment as soon as possible. Thank you.",
+  hausa: "Sannu [Customer Name], wannan tunatarwa ce cewa kuna da bashin da ba a biya ba na ₦[Amount]. Don Allah a yi ƙoƙarin biyan kuɗin da wuri. Na gode.",
+  yoruba: "Ẹ káàrọ̀ [Customer Name], a fẹ́ rán yín létí pé ẹ ní gbèsè tí kò tíì sanwó ti ₦[Amount]. Ẹ jọ̀ọ́, ẹ gbìyànjú láti san owó náà ní kíákíá. Ẹ ṣé.",
+  igbo: "Ndewo [Customer Name], nke a bụ ncheta na ị nwere ụgwọ na-akwụghị ụgwọ nke ₦[Amount]. Biko, gbalịa kwụọ ụgwọ ahụ ozugbo enwere ike. Daalụ.",
+  pidgin: "Hello [Customer Name], na small reminder say you get outstanding payment of ₦[Amount] wey you never pay. Abeg try make the payment as soon as you fit. Thank you.",
 };
 
 function getCustomer() {
@@ -30,12 +38,13 @@ function getLoan() {
 function buildMessage(language) {
   const customer = getCustomer();
   const loan = getLoan();
-  const template = templates[language];
+  const hasDueDate = loan && loan.dueDate;
+  const template = hasDueDate ? templatesWithDueDate[language] : templatesNoDueDate[language];
 
   let message = template
     .replaceAll("[Customer Name]", customer ? customer.name : "Customer")
     .replaceAll("[Amount]", loan ? loan.amount : "0")
-    .replaceAll("[Due Date]", loan ? loan.dueDate : "");
+    .replaceAll("[Due Date]", hasDueDate ? loan.dueDate : "");
 
   if (loan && loan.item) {
     message += `\n\nItem: ${loan.item}`;
