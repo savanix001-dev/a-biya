@@ -21,12 +21,6 @@ function getCustomerBalance(customerId, loans, payments) {
   return totalLoaned - totalPaid;
 }
 
-function isOverdue(loan, balance) {
-  if (!loan.dueDate || balance <= 0) return false;
-  const today = new Date().toISOString().split("T")[0];
-  return loan.dueDate < today;
-}
-
 function loadReports() {
   const customers = getCustomers();
   const loans = getLoans();
@@ -42,20 +36,47 @@ function loadReports() {
   document.getElementById("totalCollected").textContent = `₦${totalCollected.toLocaleString()}`;
   document.getElementById("totalOutstandingReport").textContent = `₦${totalOutstanding.toLocaleString()}`;
 
+  const today = new Date().toISOString().split("T")[0];
+
+  const dueTodayList = document.getElementById("dueTodayList");
+  const noDueTodayMsg = document.getElementById("noDueTodayMsg");
   const overdueList = document.getElementById("overdueList");
   const noOverdueMsg = document.getElementById("noOverdueMsg");
+
+  dueTodayList.innerHTML = "";
   overdueList.innerHTML = "";
 
+  const dueTodayCustomers = [];
   const overdueCustomers = [];
 
   customers.forEach((customer) => {
     const balance = getCustomerBalance(customer.id, loans, payments);
-    const customerLoans = loans.filter((l) => String(l.customerId) === String(customer.id));
-    const hasOverdueLoan = customerLoans.some((loan) => isOverdue(loan, balance));
+    if (balance <= 0) return;
 
-    if (hasOverdueLoan) {
-      overdueCustomers.push({ customer, balance });
-    }
+    const customerLoans = loans.filter((l) => String(l.customerId) === String(customer.id));
+    const isDueToday = customerLoans.some((loan) => loan.dueDate === today);
+    const isOverdue = customerLoans.some((loan) => loan.dueDate && loan.dueDate < today);
+
+    if (isDueToday) dueTodayCustomers.push({ customer, balance });
+    if (isOverdue) overdueCustomers.push({ customer, balance });
+  });
+
+  if (dueTodayCustomers.length === 0) {
+    noDueTodayMsg.classList.remove("hidden");
+  } else {
+    noDueTodayMsg.classList.add("hidden");
+  }
+
+  dueTodayCustomers.forEach(({ customer, balance }) => {
+    const card = document.createElement("a");
+    card.href = `customer-detail.html?id=${customer.id}`;
+    card.className = "block bg-orange-50 border border-orange-400 rounded-xl p-4";
+    card.innerHTML = `
+      <p class="font-semibold text-opay-navy">${customer.name}</p>
+      <p class="text-sm text-gray-500">${customer.phone || "No phone"}</p>
+      <p class="text-sm text-orange-600 font-semibold mt-1">Owes ₦${balance.toLocaleString()} (Due Today)</p>
+    `;
+    dueTodayList.appendChild(card);
   });
 
   if (overdueCustomers.length === 0) {
@@ -78,4 +99,3 @@ function loadReports() {
 }
 
 loadReports();
-

@@ -63,20 +63,28 @@ function loadDashboard() {
     dueTodayText.textContent = `${dueTodayCustomerIds.size} payment(s) due today`;
     dueTodayText.className = "text-orange-600 font-semibold text-sm";
     dueTodayCard.className = "block bg-orange-50 border border-orange-400 rounded-xl p-4 mt-4";
+    dueTodayCard.href = dueTodayCustomerIds.size === 1
+      ? `customer-detail.html?id=${[...dueTodayCustomerIds][0]}`
+      : "reports.html";
   } else {
     dueTodayText.textContent = "No payments due today";
     dueTodayText.className = "text-gray-500 font-semibold text-sm";
     dueTodayCard.className = "block bg-white border border-gray-200 rounded-xl p-4 mt-4";
+    dueTodayCard.href = "reports.html";
   }
 
   if (overdueCustomerIds.size > 0) {
     overdueText.textContent = `${overdueCustomerIds.size} customer(s) overdue`;
     overdueText.className = "text-red-600 font-semibold text-sm";
     overdueCard.className = "block bg-red-50 border border-red-400 rounded-xl p-4 mt-4";
+    overdueCard.href = overdueCustomerIds.size === 1
+      ? `customer-detail.html?id=${[...overdueCustomerIds][0]}`
+      : "reports.html";
   } else {
     overdueText.textContent = "No overdue customers";
     overdueText.className = "text-gray-500 font-semibold text-sm";
     overdueCard.className = "block bg-white border border-gray-200 rounded-xl p-4 mt-4";
+    overdueCard.href = "reports.html";
   }
 }
 
