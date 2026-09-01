@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Settings</title>
+  <link href="./output.css" rel="stylesheet" />
+</head>
+<body class="bg-gray-100 min-h-screen">
+  <div class="max-w-sm mx-auto p-6">
+    <h1 class="text-2xl font-bold text-opay-navy">Settings</h1>
+
+    <div class="mt-6">
+      <label class="text-sm text-gray-600">Business/Personal Name</label>
+      <input
+        id="nameInput"
+        type="text"
+        class="w-full mt-1 p-3 rounded-xl border border-gray-300 focus:outline-none focus:border-opay-green"
+      />
+    </div>
+
+    <div class="mt-4">
+      <label class="text-sm text-gray-600">Business Phone Number</label>
+      <input
+        id="phoneInput"
+        type="tel"
+        class="w-full mt-1 p-3 rounded-xl border border-gray-300 focus:outline-none focus:border-opay-green"
+      />
+    </div>
+
+    <div class="mt-4">
+      <label class="text-sm text-gray-600">Business Address (optional)</label>
+      <input
+        id="addressInput"
+        type="text"
+        class="w-full mt-1 p-3 rounded-xl border border-gray-300 focus:outline-none focus:border-opay-green"
+      />
+    </div>
+
+    <div class="mt-4">
+      <label class="text-sm text-gray-600">Logo (optional)</label>
+      <input
+        id="logoInput"
+        type="file"
+        accept="image/*"
+        class="w-full mt-1 text-sm"
+      />
+      <img id="logoPreview" class="hidden mt-2 w-20 h-20 object-cover rounded-xl border border-gray-300" />
+    </div>
+
+    <button
+      id="saveBtn"
+      class="w-full mt-6 bg-opay-green text-white py-3 rounded-xl font-semibold"
+    >Save Changes</button>
+
+    <p id="savedMsg" class="text-green-600 text-sm text-center mt-3 hidden">Saved successfully!</p>
+
+    <a href="more.html" class="block text-center text-gray-500 mt-4">Back</a>
+  </div>
+
+  <script src="./settings.js"></script>
+</body>
+</html>
