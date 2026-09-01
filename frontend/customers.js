@@ -21,6 +21,18 @@ function getCustomerBalance(customerId) {
   return totalLoaned - totalPaid;
 }
 
+const urlParams = new URLSearchParams(window.location.search);
+const action = urlParams.get("action");
+
+const banner = document.getElementById("actionBanner");
+if (action === "addLoan") {
+  banner.textContent = "Select a customer to add a loan for";
+  banner.classList.remove("hidden");
+} else if (action === "recordPayment") {
+  banner.textContent = "Select a customer to record a payment for";
+  banner.classList.remove("hidden");
+}
+
 function renderCustomers(filter = "") {
   const list = document.getElementById("customerList");
   const emptyMsg = document.getElementById("emptyMsg");
@@ -45,7 +57,15 @@ function renderCustomers(filter = "") {
   filtered.forEach((c) => {
     const balance = getCustomerBalance(c.id);
     const card = document.createElement("a");
-    card.href = `customer-detail.html?id=${c.id}`;
+
+    if (action === "addLoan") {
+      card.href = `add-loan.html?customerId=${c.id}`;
+    } else if (action === "recordPayment") {
+      card.href = `record-payment.html?customerId=${c.id}`;
+    } else {
+      card.href = `customer-detail.html?id=${c.id}`;
+    }
+
     card.className = "block bg-white rounded-xl shadow p-4 flex justify-between items-center";
     card.innerHTML = `
       <div>
