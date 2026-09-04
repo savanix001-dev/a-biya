@@ -16,3 +16,8 @@ class CustomerResponse(BaseModel):
 
     class Config:
         from_attributes = True
+
+class CustomerUpdate(BaseModel):
+    name: Optional[str] = None
+    phone: Optional[str] = None
+    address: Optional[str] = None

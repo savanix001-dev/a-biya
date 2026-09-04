@@ -4,7 +4,7 @@ from typing import List
 
 from database import SessionLocal, engine, Base
 from models import Customer
-from schemas import CustomerCreate, CustomerResponse
+from schemas import CustomerCreate, CustomerResponse, CustomerUpdate
 
 Base.metadata.create_all(bind=engine)
 
@@ -39,3 +39,27 @@ def get_customer(customer_id: int, db: Session = Depends(get_db)):
     if not customer:
         raise HTTPException(status_code=404, detail="Customer not found")
     return customer
+
+@app.put("/customers/{customer_id}", response_model=CustomerResponse)
+def update_customer(customer_id: int, updates: CustomerUpdate, db: Session = Depends(get_db)):
+    customer = db.query(Customer).filter(Customer.id == customer_id).first()
+    if not customer:
+        raise HTTPException(status_code=404, detail="Customer not found")
+
+    update_data = updates.model_dump(exclude_unset=True)
+    for key, value in update_data.items():
+        setattr(customer, key, value)
+
+    db.commit()
+    db.refresh(customer)
+    return customer
+
+@app.delete("/customers/{customer_id}")
+def delete_customer(customer_id: int, db: Session = Depends(get_db)):
+    customer = db.query(Customer).filter(Customer.id == customer_id).first()
+    if not customer:
+        raise HTTPException(status_code=404, detail="Customer not found")
+
+    db.delete(customer)
+    db.commit()
+    return {"message": "Customer deleted successfully"}
