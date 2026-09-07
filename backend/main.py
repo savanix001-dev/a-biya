@@ -4,8 +4,8 @@ from typing import List
 
 from database import SessionLocal, engine, Base
 from models import Customer, Loan, Payment, BusinessOwner
-from schemas import CustomerCreate, CustomerResponse, CustomerUpdate, LoanCreate, LoanResponse, LoanUpdate, PaymentCreate, PaymentResponse, PaymentUpdate, BusinessOwnerCreate, BusinessOwnerResponse
-from auth import hash_pin, verify_pin
+from schemas import CustomerCreate, CustomerResponse, CustomerUpdate, LoanCreate, LoanResponse, LoanUpdate, PaymentCreate, PaymentResponse, PaymentUpdate, BusinessOwnerCreate, BusinessOwnerResponse, LoginRequest, TokenResponse
+from auth import hash_pin, verify_pin, create_access_token
 
 Base.metadata.create_all(bind=engine)
 
@@ -189,3 +189,13 @@ def register(owner: BusinessOwnerCreate, db: Session = Depends(get_db)):
     db.commit()
     db.refresh(new_owner)
     return new_owner
+
+
+@app.post("/login", response_model=TokenResponse)
+def login(credentials: LoginRequest, db: Session = Depends(get_db)):
+    owner = db.query(BusinessOwner).filter(BusinessOwner.phone == credentials.phone).first()
+    if not owner or not verify_pin(credentials.pin, owner.hashed_pin):
+        raise HTTPException(status_code=401, detail="Invalid phone number or PIN")
+
+    token = create_access_token({"owner_id": owner.id})
+    return {"access_token": token, "token_type": "bearer"}

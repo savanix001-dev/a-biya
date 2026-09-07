@@ -83,3 +83,12 @@ class BusinessOwnerResponse(BaseModel):
 
     class Config:
         from_attributes = True
+
+
+class LoginRequest(BaseModel):
+    phone: str
+    pin: str
+
+class TokenResponse(BaseModel):
+    access_token: str
+    token_type: str = "bearer"
