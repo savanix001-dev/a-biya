@@ -10,6 +10,7 @@ class Customer(Base):
     name = Column(String, nullable=False)
     phone = Column(String, nullable=True)
     address = Column(String, nullable=True)
+    owner_id = Column(Integer, ForeignKey("business_owners.id"), nullable=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
     loans = relationship("Loan", back_populates="customer")
@@ -40,3 +41,13 @@ class Payment(Base):
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
     customer = relationship("Customer", back_populates="payments")
+
+
+class BusinessOwner(Base):
+    __tablename__ = "business_owners"
+
+    id = Column(Integer, primary_key=True, index=True)
+    phone = Column(String, unique=True, nullable=False, index=True)
+    hashed_pin = Column(String, nullable=False)
+    business_name = Column(String, nullable=True)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())

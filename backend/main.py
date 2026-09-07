@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from typing import List
 
 from database import SessionLocal, engine, Base
-from models import Customer, Loan, Payment
+from models import Customer, Loan, Payment, BusinessOwner
 from schemas import CustomerCreate, CustomerResponse, CustomerUpdate, LoanCreate, LoanResponse, LoanUpdate, PaymentCreate, PaymentResponse, PaymentUpdate
 
 Base.metadata.create_all(bind=engine)
