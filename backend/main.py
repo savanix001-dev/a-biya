@@ -4,7 +4,8 @@ from typing import List
 
 from database import SessionLocal, engine, Base
 from models import Customer, Loan, Payment, BusinessOwner
-from schemas import CustomerCreate, CustomerResponse, CustomerUpdate, LoanCreate, LoanResponse, LoanUpdate, PaymentCreate, PaymentResponse, PaymentUpdate
+from schemas import CustomerCreate, CustomerResponse, CustomerUpdate, LoanCreate, LoanResponse, LoanUpdate, PaymentCreate, PaymentResponse, PaymentUpdate, BusinessOwnerCreate, BusinessOwnerResponse
+from auth import hash_pin, verify_pin
 
 Base.metadata.create_all(bind=engine)
 
@@ -171,3 +172,20 @@ def delete_payment(payment_id: int, db: Session = Depends(get_db)):
     db.delete(payment)
     db.commit()
     return {"message": "Payment deleted successfully"}
+
+
+@app.post("/register", response_model=BusinessOwnerResponse)
+def register(owner: BusinessOwnerCreate, db: Session = Depends(get_db)):
+    existing = db.query(BusinessOwner).filter(BusinessOwner.phone == owner.phone).first()
+    if existing:
+        raise HTTPException(status_code=400, detail="This phone number is already registered")
+
+    new_owner = BusinessOwner(
+        phone=owner.phone,
+        hashed_pin=hash_pin(owner.pin),
+        business_name=owner.business_name
+    )
+    db.add(new_owner)
+    db.commit()
+    db.refresh(new_owner)
+    return new_owner

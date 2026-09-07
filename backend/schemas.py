@@ -68,3 +68,18 @@ class PaymentResponse(BaseModel):
 class PaymentUpdate(BaseModel):
     amount: Optional[Decimal] = None
     date_paid: Optional[date] = None
+
+
+class BusinessOwnerCreate(BaseModel):
+    phone: str
+    pin: str
+    business_name: Optional[str] = None
+
+class BusinessOwnerResponse(BaseModel):
+    id: int
+    phone: str
+    business_name: Optional[str] = None
+    created_at: datetime
+
+    class Config:
+        from_attributes = True
