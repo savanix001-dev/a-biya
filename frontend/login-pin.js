@@ -29,24 +29,38 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
-  loginBtn.addEventListener("click", () => {
+  loginBtn.addEventListener("click", async () => {
     const enteredPin = Array.from(boxes).map(b => b.value).join("");
-    const savedPin = localStorage.getItem("loginPin");
+    const phone = localStorage.getItem("phoneNumber") || "";
 
-    if (enteredPin.length !== 6) {
-      errorMsg.textContent = "Please enter all 6 digits";
+    if (enteredPin.length !== 4) {
+      errorMsg.textContent = "Please enter all 4 digits";
       errorMsg.classList.remove("hidden");
       return;
     }
 
-    if (enteredPin !== savedPin) {
-      errorMsg.textContent = "Incorrect PIN. Try again.";
-      errorMsg.classList.remove("hidden");
-      clearBoxes();
-      return;
-    }
+    try {
+      const response = await fetch(`${API_BASE_URL}/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ phone: phone, pin: enteredPin })
+      });
 
-    errorMsg.classList.add("hidden");
-    window.location.href = "dashboard.html";
+      const data = await response.json();
+
+      if (!response.ok) {
+        errorMsg.textContent = data.detail || "Incorrect PIN. Try again.";
+        errorMsg.classList.remove("hidden");
+        clearBoxes();
+        return;
+      }
+
+      errorMsg.classList.add("hidden");
+      localStorage.setItem("authToken", data.access_token);
+      window.location.href = "dashboard.html";
+    } catch (error) {
+      errorMsg.textContent = "Could not connect to the server. Please check your connection.";
+      errorMsg.classList.remove("hidden");
+    }
   });
 });

@@ -31,8 +31,8 @@ document.addEventListener("DOMContentLoaded", () => {
   nextBtn.addEventListener("click", () => {
     const pin = Array.from(boxes).map(b => b.value).join("");
 
-    if (pin.length !== 6) {
-      errorMsg.textContent = "Please enter all 6 digits";
+    if (pin.length !== 4) {
+      errorMsg.textContent = "Please enter all 4 digits";
       errorMsg.classList.remove("hidden");
       return;
     }
@@ -41,7 +41,7 @@ document.addEventListener("DOMContentLoaded", () => {
       firstPin = pin;
       isConfirmStep = true;
       stepTitle.textContent = "Confirm Your PIN";
-      stepSubtitle.textContent = "Enter the same 6-digit PIN again";
+      stepSubtitle.textContent = "Enter the same 4-digit PIN again";
       errorMsg.classList.add("hidden");
       clearBoxes();
       return;
@@ -54,7 +54,7 @@ document.addEventListener("DOMContentLoaded", () => {
       isConfirmStep = false;
       firstPin = null;
       stepTitle.textContent = "Create Login PIN";
-      stepSubtitle.textContent = "Choose a 6-digit PIN to log in next time";
+      stepSubtitle.textContent = "Choose a 4-digit PIN to log in next time";
       return;
     }
 
