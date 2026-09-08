@@ -66,8 +66,8 @@ def delete_customer(customer_id: int, db: Session = Depends(get_db), current_own
     return {"message": "Customer deleted successfully"}
 
 @app.post("/loans", response_model=LoanResponse)
-def create_loan(loan: LoanCreate, db: Session = Depends(get_db)):
-    customer = db.query(Customer).filter(Customer.id == loan.customer_id).first()
+def create_loan(loan: LoanCreate, db: Session = Depends(get_db), current_owner: BusinessOwner = Depends(get_current_owner)):
+    customer = db.query(Customer).filter(Customer.id == loan.customer_id, Customer.owner_id == current_owner.id).first()
     if not customer:
         raise HTTPException(status_code=404, detail="Customer not found")
 
@@ -78,26 +78,26 @@ def create_loan(loan: LoanCreate, db: Session = Depends(get_db)):
     return new_loan
 
 @app.get("/loans", response_model=List[LoanResponse])
-def get_loans(db: Session = Depends(get_db)):
-    return db.query(Loan).all()
+def get_loans(db: Session = Depends(get_db), current_owner: BusinessOwner = Depends(get_current_owner)):
+    return db.query(Loan).join(Customer).filter(Customer.owner_id == current_owner.id).all()
 
 @app.get("/customers/{customer_id}/loans", response_model=List[LoanResponse])
-def get_customer_loans(customer_id: int, db: Session = Depends(get_db)):
-    customer = db.query(Customer).filter(Customer.id == customer_id).first()
+def get_customer_loans(customer_id: int, db: Session = Depends(get_db), current_owner: BusinessOwner = Depends(get_current_owner)):
+    customer = db.query(Customer).filter(Customer.id == customer_id, Customer.owner_id == current_owner.id).first()
     if not customer:
         raise HTTPException(status_code=404, detail="Customer not found")
     return db.query(Loan).filter(Loan.customer_id == customer_id).all()
 
 @app.get("/loans/{loan_id}", response_model=LoanResponse)
-def get_loan(loan_id: int, db: Session = Depends(get_db)):
-    loan = db.query(Loan).filter(Loan.id == loan_id).first()
+def get_loan(loan_id: int, db: Session = Depends(get_db), current_owner: BusinessOwner = Depends(get_current_owner)):
+    loan = db.query(Loan).join(Customer).filter(Loan.id == loan_id, Customer.owner_id == current_owner.id).first()
     if not loan:
         raise HTTPException(status_code=404, detail="Loan not found")
     return loan
 
 @app.put("/loans/{loan_id}", response_model=LoanResponse)
-def update_loan(loan_id: int, updates: LoanUpdate, db: Session = Depends(get_db)):
-    loan = db.query(Loan).filter(Loan.id == loan_id).first()
+def update_loan(loan_id: int, updates: LoanUpdate, db: Session = Depends(get_db), current_owner: BusinessOwner = Depends(get_current_owner)):
+    loan = db.query(Loan).join(Customer).filter(Loan.id == loan_id, Customer.owner_id == current_owner.id).first()
     if not loan:
         raise HTTPException(status_code=404, detail="Loan not found")
 
@@ -110,8 +110,8 @@ def update_loan(loan_id: int, updates: LoanUpdate, db: Session = Depends(get_db)
     return loan
 
 @app.delete("/loans/{loan_id}")
-def delete_loan(loan_id: int, db: Session = Depends(get_db)):
-    loan = db.query(Loan).filter(Loan.id == loan_id).first()
+def delete_loan(loan_id: int, db: Session = Depends(get_db), current_owner: BusinessOwner = Depends(get_current_owner)):
+    loan = db.query(Loan).join(Customer).filter(Loan.id == loan_id, Customer.owner_id == current_owner.id).first()
     if not loan:
         raise HTTPException(status_code=404, detail="Loan not found")
 
@@ -120,8 +120,8 @@ def delete_loan(loan_id: int, db: Session = Depends(get_db)):
     return {"message": "Loan deleted successfully"}
 
 @app.post("/payments", response_model=PaymentResponse)
-def create_payment(payment: PaymentCreate, db: Session = Depends(get_db)):
-    customer = db.query(Customer).filter(Customer.id == payment.customer_id).first()
+def create_payment(payment: PaymentCreate, db: Session = Depends(get_db), current_owner: BusinessOwner = Depends(get_current_owner)):
+    customer = db.query(Customer).filter(Customer.id == payment.customer_id, Customer.owner_id == current_owner.id).first()
     if not customer:
         raise HTTPException(status_code=404, detail="Customer not found")
 
@@ -132,26 +132,26 @@ def create_payment(payment: PaymentCreate, db: Session = Depends(get_db)):
     return new_payment
 
 @app.get("/payments", response_model=List[PaymentResponse])
-def get_payments(db: Session = Depends(get_db)):
-    return db.query(Payment).all()
+def get_payments(db: Session = Depends(get_db), current_owner: BusinessOwner = Depends(get_current_owner)):
+    return db.query(Payment).join(Customer).filter(Customer.owner_id == current_owner.id).all()
 
 @app.get("/customers/{customer_id}/payments", response_model=List[PaymentResponse])
-def get_customer_payments(customer_id: int, db: Session = Depends(get_db)):
-    customer = db.query(Customer).filter(Customer.id == customer_id).first()
+def get_customer_payments(customer_id: int, db: Session = Depends(get_db), current_owner: BusinessOwner = Depends(get_current_owner)):
+    customer = db.query(Customer).filter(Customer.id == customer_id, Customer.owner_id == current_owner.id).first()
     if not customer:
         raise HTTPException(status_code=404, detail="Customer not found")
     return db.query(Payment).filter(Payment.customer_id == customer_id).all()
 
 @app.get("/payments/{payment_id}", response_model=PaymentResponse)
-def get_payment(payment_id: int, db: Session = Depends(get_db)):
-    payment = db.query(Payment).filter(Payment.id == payment_id).first()
+def get_payment(payment_id: int, db: Session = Depends(get_db), current_owner: BusinessOwner = Depends(get_current_owner)):
+    payment = db.query(Payment).join(Customer).filter(Payment.id == payment_id, Customer.owner_id == current_owner.id).first()
     if not payment:
         raise HTTPException(status_code=404, detail="Payment not found")
     return payment
 
 @app.put("/payments/{payment_id}", response_model=PaymentResponse)
-def update_payment(payment_id: int, updates: PaymentUpdate, db: Session = Depends(get_db)):
-    payment = db.query(Payment).filter(Payment.id == payment_id).first()
+def update_payment(payment_id: int, updates: PaymentUpdate, db: Session = Depends(get_db), current_owner: BusinessOwner = Depends(get_current_owner)):
+    payment = db.query(Payment).join(Customer).filter(Payment.id == payment_id, Customer.owner_id == current_owner.id).first()
     if not payment:
         raise HTTPException(status_code=404, detail="Payment not found")
 
@@ -164,8 +164,8 @@ def update_payment(payment_id: int, updates: PaymentUpdate, db: Session = Depend
     return payment
 
 @app.delete("/payments/{payment_id}")
-def delete_payment(payment_id: int, db: Session = Depends(get_db)):
-    payment = db.query(Payment).filter(Payment.id == payment_id).first()
+def delete_payment(payment_id: int, db: Session = Depends(get_db), current_owner: BusinessOwner = Depends(get_current_owner)):
+    payment = db.query(Payment).join(Customer).filter(Payment.id == payment_id, Customer.owner_id == current_owner.id).first()
     if not payment:
         raise HTTPException(status_code=404, detail="Payment not found")
 
