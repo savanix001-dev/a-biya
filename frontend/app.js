@@ -29,7 +29,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // Save the phone number temporarily so the next screen can show it
     localStorage.setItem("phoneNumber", phone);
 
-    // Go to the OTP screen
-    window.location.href = "otp.html";
+    // Go straight to PIN creation (no OTP at signup)
+    window.location.href = "create-pin.html";
   });
 });
