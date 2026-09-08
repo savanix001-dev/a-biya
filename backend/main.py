@@ -42,7 +42,33 @@ def create_customer(customer: CustomerCreate, db: Session = Depends(get_db), cur
 
 @app.get("/customers", response_model=List[CustomerResponse])
 def get_customers(db: Session = Depends(get_db), current_owner: BusinessOwner = Depends(get_current_owner)):
-    return db.query(Customer).filter(Customer.owner_id == current_owner.id).all()
+    from sqlalchemy import func
+
+    customers = db.query(Customer).filter(Customer.owner_id == current_owner.id).all()
+
+    loan_totals = dict(
+        db.query(Loan.customer_id, func.coalesce(func.sum(Loan.amount), 0))
+        .join(Customer)
+        .filter(Customer.owner_id == current_owner.id)
+        .group_by(Loan.customer_id)
+        .all()
+    )
+    payment_totals = dict(
+        db.query(Payment.customer_id, func.coalesce(func.sum(Payment.amount), 0))
+        .join(Customer)
+        .filter(Customer.owner_id == current_owner.id)
+        .group_by(Payment.customer_id)
+        .all()
+    )
+
+    result = []
+    for c in customers:
+        total_loans = loan_totals.get(c.id, 0)
+        total_payments = payment_totals.get(c.id, 0)
+        c.balance = total_loans - total_payments
+        result.append(c)
+
+    return result
 
 @app.get("/customers/{customer_id}", response_model=CustomerResponse)
 def get_customer(customer_id: int, db: Session = Depends(get_db), current_owner: BusinessOwner = Depends(get_current_owner)):

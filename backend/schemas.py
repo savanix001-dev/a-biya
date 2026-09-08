@@ -1,6 +1,7 @@
 from pydantic import BaseModel
 from typing import Optional
-from datetime import datetime
+from datetime import datetime, date
+from decimal import Decimal
 
 class CustomerCreate(BaseModel):
     name: str
@@ -13,6 +14,7 @@ class CustomerResponse(BaseModel):
     phone: Optional[str] = None
     address: Optional[str] = None
     created_at: datetime
+    balance: Decimal = Decimal("0")
 
     class Config:
         from_attributes = True
@@ -21,9 +23,6 @@ class CustomerUpdate(BaseModel):
     name: Optional[str] = None
     phone: Optional[str] = None
     address: Optional[str] = None
-
-from datetime import date
-from decimal import Decimal
 
 class LoanCreate(BaseModel):
     customer_id: int
