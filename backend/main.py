@@ -5,7 +5,7 @@ from typing import List
 from database import SessionLocal, engine, Base
 from models import Customer, Loan, Payment, BusinessOwner
 from schemas import CustomerCreate, CustomerResponse, CustomerUpdate, LoanCreate, LoanResponse, LoanUpdate, PaymentCreate, PaymentResponse, PaymentUpdate, BusinessOwnerCreate, BusinessOwnerResponse, LoginRequest, TokenResponse
-from auth import hash_pin, verify_pin, create_access_token
+from auth import hash_pin, verify_pin, create_access_token, get_current_owner
 
 Base.metadata.create_all(bind=engine)
 
@@ -23,27 +23,27 @@ def read_root():
     return {"message": "a-biya backend is working!"}
 
 @app.post("/customers", response_model=CustomerResponse)
-def create_customer(customer: CustomerCreate, db: Session = Depends(get_db)):
-    new_customer = Customer(**customer.model_dump())
+def create_customer(customer: CustomerCreate, db: Session = Depends(get_db), current_owner: BusinessOwner = Depends(get_current_owner)):
+    new_customer = Customer(**customer.model_dump(), owner_id=current_owner.id)
     db.add(new_customer)
     db.commit()
     db.refresh(new_customer)
     return new_customer
 
 @app.get("/customers", response_model=List[CustomerResponse])
-def get_customers(db: Session = Depends(get_db)):
-    return db.query(Customer).all()
+def get_customers(db: Session = Depends(get_db), current_owner: BusinessOwner = Depends(get_current_owner)):
+    return db.query(Customer).filter(Customer.owner_id == current_owner.id).all()
 
 @app.get("/customers/{customer_id}", response_model=CustomerResponse)
-def get_customer(customer_id: int, db: Session = Depends(get_db)):
-    customer = db.query(Customer).filter(Customer.id == customer_id).first()
+def get_customer(customer_id: int, db: Session = Depends(get_db), current_owner: BusinessOwner = Depends(get_current_owner)):
+    customer = db.query(Customer).filter(Customer.id == customer_id, Customer.owner_id == current_owner.id).first()
     if not customer:
         raise HTTPException(status_code=404, detail="Customer not found")
     return customer
 
 @app.put("/customers/{customer_id}", response_model=CustomerResponse)
-def update_customer(customer_id: int, updates: CustomerUpdate, db: Session = Depends(get_db)):
-    customer = db.query(Customer).filter(Customer.id == customer_id).first()
+def update_customer(customer_id: int, updates: CustomerUpdate, db: Session = Depends(get_db), current_owner: BusinessOwner = Depends(get_current_owner)):
+    customer = db.query(Customer).filter(Customer.id == customer_id, Customer.owner_id == current_owner.id).first()
     if not customer:
         raise HTTPException(status_code=404, detail="Customer not found")
 
@@ -56,8 +56,8 @@ def update_customer(customer_id: int, updates: CustomerUpdate, db: Session = Dep
     return customer
 
 @app.delete("/customers/{customer_id}")
-def delete_customer(customer_id: int, db: Session = Depends(get_db)):
-    customer = db.query(Customer).filter(Customer.id == customer_id).first()
+def delete_customer(customer_id: int, db: Session = Depends(get_db), current_owner: BusinessOwner = Depends(get_current_owner)):
+    customer = db.query(Customer).filter(Customer.id == customer_id, Customer.owner_id == current_owner.id).first()
     if not customer:
         raise HTTPException(status_code=404, detail="Customer not found")
 
