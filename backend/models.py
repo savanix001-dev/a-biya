@@ -27,6 +27,7 @@ class Loan(Base):
     item = Column(String, nullable=True)
     date_given = Column(Date, nullable=True)
     due_date = Column(Date, nullable=True)
+    client_reference = Column(String, nullable=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
     customer = relationship("Customer", back_populates="loans")
@@ -39,6 +40,7 @@ class Payment(Base):
     customer_id = Column(Integer, ForeignKey("customers.id"), nullable=False)
     amount = Column(Numeric(12, 2), nullable=False)
     date_paid = Column(Date, nullable=True)
+    client_reference = Column(String, nullable=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
     customer = relationship("Customer", back_populates="payments")

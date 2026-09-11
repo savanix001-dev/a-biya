@@ -57,6 +57,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       errorMsg.classList.add("hidden");
       localStorage.setItem("authToken", data.access_token);
+      localStorage.setItem("loginPin", enteredPin);
       window.location.href = "dashboard.html";
     } catch (error) {
       errorMsg.textContent = "Could not connect to the server. Please check your connection.";

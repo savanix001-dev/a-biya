@@ -1,21 +1,18 @@
 function getCustomers() {
-  const data = localStorage.getItem("customers");
-  return data ? JSON.parse(data) : [];
+  return getLocal("local_customers");
 }
 
 function getLoans() {
-  const data = localStorage.getItem("loans");
-  return data ? JSON.parse(data) : [];
+  return getLocal("local_loans");
 }
 
 function getPayments() {
-  const data = localStorage.getItem("payments");
-  return data ? JSON.parse(data) : [];
+  return getLocal("local_payments");
 }
 
 function getCustomerBalance(customerId, loans, payments) {
-  const customerLoans = loans.filter((l) => String(l.customerId) === String(customerId));
-  const customerPayments = payments.filter((p) => String(p.customerId) === String(customerId));
+  const customerLoans = loans.filter((l) => String(l.customer_id) === String(customerId));
+  const customerPayments = payments.filter((p) => String(p.customer_id) === String(customerId));
   const totalLoaned = customerLoans.reduce((sum, l) => sum + Number(l.amount), 0);
   const totalPaid = customerPayments.reduce((sum, p) => sum + Number(p.amount), 0);
   return totalLoaned - totalPaid;
@@ -43,12 +40,12 @@ function loadDashboard() {
     const balance = getCustomerBalance(customer.id, loans, payments);
     if (balance <= 0) return;
 
-    const customerLoans = loans.filter((l) => String(l.customerId) === String(customer.id));
+    const customerLoans = loans.filter((l) => String(l.customer_id) === String(customer.id));
     customerLoans.forEach((loan) => {
-      if (!loan.dueDate) return;
-      if (loan.dueDate === today) {
+      if (!loan.due_date) return;
+      if (loan.due_date === today) {
         dueTodayCustomerIds.add(customer.id);
-      } else if (loan.dueDate < today) {
+      } else if (loan.due_date < today) {
         overdueCustomerIds.add(customer.id);
       }
     });
@@ -89,3 +86,10 @@ function loadDashboard() {
 }
 
 loadDashboard();
+
+async function refreshAndReload() {
+  await Promise.all([refreshCustomersGenericFromBackend(), refreshLoansFromBackend(), refreshPaymentsFromBackend()]);
+  loadDashboard();
+}
+
+refreshAndReload();

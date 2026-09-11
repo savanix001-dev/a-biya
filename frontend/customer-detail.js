@@ -4,13 +4,11 @@ function getCustomerIdFromUrl() {
 }
 
 function getLoans() {
-  const data = localStorage.getItem("loans");
-  return data ? JSON.parse(data) : [];
+  return getLocal("local_loans");
 }
 
 function getPayments() {
-  const data = localStorage.getItem("payments");
-  return data ? JSON.parse(data) : [];
+  return getLocal("local_payments");
 }
 
 function formatTimestamp(isoString) {
@@ -36,7 +34,7 @@ function deleteLoan(loanId, customerId) {
   if (!checkPin()) return;
 
   const loans = getLoans().filter((l) => String(l.id) !== String(loanId));
-  localStorage.setItem("loans", JSON.stringify(loans));
+  setLocal("local_loans", loans);
   renderHistory(customerId);
 }
 
@@ -46,7 +44,7 @@ function deletePayment(paymentId, customerId) {
   if (!checkPin()) return;
 
   const payments = getPayments().filter((p) => String(p.id) !== String(paymentId));
-  localStorage.setItem("payments", JSON.stringify(payments));
+  setLocal("local_payments", payments);
   renderHistory(customerId);
 }
 
@@ -62,15 +60,15 @@ function editLoan(loanId, customerId) {
     return;
   }
 
-  const newDueDate = prompt("Edit due date (YYYY-MM-DD), leave blank for none:", loan.dueDate || "");
+  const newDueDate = prompt("Edit due date (YYYY-MM-DD), leave blank for none:", loan.due_date || "");
   if (newDueDate === null) return;
 
   if (!checkPin()) return;
 
   const index = loans.findIndex((l) => String(l.id) === String(loanId));
   loans[index].amount = newAmount.trim();
-  loans[index].dueDate = newDueDate.trim() || null;
-  localStorage.setItem("loans", JSON.stringify(loans));
+  loans[index].due_date = newDueDate.trim() || null;
+  setLocal("local_loans", loans);
   renderHistory(customerId);
 }
 
@@ -90,21 +88,21 @@ function editPayment(paymentId, customerId) {
 
   const index = payments.findIndex((p) => String(p.id) === String(paymentId));
   payments[index].amount = newAmount.trim();
-  localStorage.setItem("payments", JSON.stringify(payments));
+  setLocal("local_payments", payments);
   renderHistory(customerId);
 }
 
 function renderHistory(customerId) {
   const loans = getLoans()
-    .filter((l) => String(l.customerId) === String(customerId))
+    .filter((l) => String(l.customer_id) === String(customerId))
     .map((l) => ({ type: "loan", ...l }));
 
   const payments = getPayments()
-    .filter((p) => String(p.customerId) === String(customerId))
+    .filter((p) => String(p.customer_id) === String(customerId))
     .map((p) => ({ type: "payment", ...p }));
 
   const history = [...loans, ...payments].sort(
-    (a, b) => new Date(a.createdAt || 0) - new Date(b.createdAt || 0)
+    (a, b) => new Date(a.created_at || 0) - new Date(b.created_at || 0)
   );
 
   const historyList = document.getElementById("historyList");
@@ -126,16 +124,16 @@ function renderHistory(customerId) {
       const reminderBtn = `<a href="reminder.html?loanId=${entry.id}&customerId=${customerId}" class="block text-center bg-opay-navy text-white text-sm mt-3 py-2 rounded-xl font-semibold">Send Reminder</a>`;
       card.innerHTML = `
         <div class="flex justify-between items-start">
-          <p class="text-xs font-semibold text-opay-green uppercase">Loan Given</p>
+          <p class="text-xs font-semibold text-opay-green uppercase">Loan Given${entry.synced === false ? " (syncing...)" : ""}</p>
           <div class="flex gap-3">
             <button class="edit-loan-btn text-xs text-opay-navy font-semibold">Edit</button>
             <button class="delete-loan-btn text-xs text-red-500 font-semibold">Delete</button>
           </div>
         </div>
         <p class="font-semibold text-opay-navy mt-1">₦${entry.amount}</p>
-        <p class="text-sm text-gray-500">Due: ${entry.dueDate || "No due date"}</p>
+        <p class="text-sm text-gray-500">Due: ${entry.due_date || "No due date"}</p>
         ${entry.item ? `<p class="text-sm text-gray-500">Item: ${entry.item}</p>` : ""}
-        <p class="text-xs text-gray-400 mt-1">${formatTimestamp(entry.createdAt)}</p>
+        <p class="text-xs text-gray-400 mt-1">${formatTimestamp(entry.created_at)}</p>
         ${reminderBtn}
       `;
       card.querySelector(".edit-loan-btn").addEventListener("click", () => editLoan(entry.id, customerId));
@@ -144,14 +142,14 @@ function renderHistory(customerId) {
       card.className = "bg-orange-50 border border-orange-400 rounded-xl p-4";
       card.innerHTML = `
         <div class="flex justify-between items-start">
-          <p class="text-xs font-semibold text-orange-500 uppercase">Payment Received</p>
+          <p class="text-xs font-semibold text-orange-500 uppercase">Payment Received${entry.synced === false ? " (syncing...)" : ""}</p>
           <div class="flex gap-3">
             <button class="edit-payment-btn text-xs text-opay-navy font-semibold">Edit</button>
             <button class="delete-payment-btn text-xs text-red-500 font-semibold">Delete</button>
           </div>
         </div>
         <p class="font-semibold text-opay-navy mt-1">₦${entry.amount}</p>
-        <p class="text-xs text-gray-400 mt-1">${formatTimestamp(entry.createdAt)}</p>
+        <p class="text-xs text-gray-400 mt-1">${formatTimestamp(entry.created_at)}</p>
       `;
       card.querySelector(".edit-payment-btn").addEventListener("click", () => editPayment(entry.id, customerId));
       card.querySelector(".delete-payment-btn").addEventListener("click", () => deletePayment(entry.id, customerId));
@@ -168,7 +166,7 @@ function renderHistory(customerId) {
 
 function loadCustomer() {
   const id = getCustomerIdFromUrl();
-  const customers = JSON.parse(localStorage.getItem("customers") || "[]");
+  const customers = getLocal("local_customers");
   const customer = customers.find((c) => String(c.id) === String(id));
 
   if (!customer) {
@@ -190,17 +188,17 @@ function loadCustomer() {
     if (!confirmed) return;
     if (!checkPin()) return;
 
-    const customers = JSON.parse(localStorage.getItem("customers") || "[]");
+    const customers = getLocal("local_customers");
     const updatedCustomers = customers.filter((c) => String(c.id) !== String(customer.id));
-    localStorage.setItem("customers", JSON.stringify(updatedCustomers));
+    setLocal("local_customers", updatedCustomers);
 
-    const loans = JSON.parse(localStorage.getItem("loans") || "[]");
-    const updatedLoans = loans.filter((l) => String(l.customerId) !== String(customer.id));
-    localStorage.setItem("loans", JSON.stringify(updatedLoans));
+    const loans = getLocal("local_loans");
+    const updatedLoans = loans.filter((l) => String(l.customer_id) !== String(customer.id));
+    setLocal("local_loans", updatedLoans);
 
-    const payments = JSON.parse(localStorage.getItem("payments") || "[]");
-    const updatedPayments = payments.filter((p) => String(p.customerId) !== String(customer.id));
-    localStorage.setItem("payments", JSON.stringify(updatedPayments));
+    const payments = getLocal("local_payments");
+    const updatedPayments = payments.filter((p) => String(p.customer_id) !== String(customer.id));
+    setLocal("local_payments", updatedPayments);
 
     window.location.href = "customers.html";
   });
@@ -209,3 +207,10 @@ function loadCustomer() {
 }
 
 loadCustomer();
+
+async function refreshAndReloadCustomer() {
+  await Promise.all([refreshCustomersGenericFromBackend(), refreshLoansFromBackend(), refreshPaymentsFromBackend()]);
+  loadCustomer();
+}
+
+refreshAndReloadCustomer();

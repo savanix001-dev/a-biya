@@ -3,19 +3,9 @@ function getCustomerIdFromUrl() {
   return params.get("customerId");
 }
 
-function getLoans() {
-  const data = localStorage.getItem("loans");
-  return data ? JSON.parse(data) : [];
-}
-
-function getPayments() {
-  const data = localStorage.getItem("payments");
-  return data ? JSON.parse(data) : [];
-}
-
 function getBalance(customerId) {
-  const loans = getLoans().filter((l) => String(l.customerId) === String(customerId));
-  const payments = getPayments().filter((p) => String(p.customerId) === String(customerId));
+  const loans = getLocal("local_loans").filter((l) => String(l.customer_id) === String(customerId));
+  const payments = getLocal("local_payments").filter((p) => String(p.customer_id) === String(customerId));
   const totalLoaned = loans.reduce((sum, l) => sum + Number(l.amount), 0);
   const totalPaid = payments.reduce((sum, p) => sum + Number(p.amount), 0);
   return totalLoaned - totalPaid;
@@ -25,7 +15,7 @@ const customerId = getCustomerIdFromUrl();
 document.getElementById("cancelBtn").href = `customer-detail.html?id=${customerId}`;
 
 function loadCustomerInfo() {
-  const customers = JSON.parse(localStorage.getItem("customers") || "[]");
+  const customers = getLocal("local_customers");
   const customer = customers.find((c) => String(c.id) === String(customerId));
   if (customer) {
     document.getElementById("customerNameLabel").textContent = `For: ${customer.name}`;
@@ -81,27 +71,45 @@ document.getElementById("backBtn").addEventListener("click", () => {
   document.getElementById("pinError").classList.add("hidden");
 });
 
-document.getElementById("confirmBtn").addEventListener("click", () => {
+document.getElementById("confirmBtn").addEventListener("click", async () => {
   const pinInput = document.getElementById("pinInput");
   const pinError = document.getElementById("pinError");
+  const confirmBtn = document.getElementById("confirmBtn");
   const savedPin = localStorage.getItem("loginPin");
+
+  if (confirmBtn.disabled) return;
 
   if (pinInput.value !== savedPin) {
     pinError.classList.remove("hidden");
     return;
   }
 
-  const payments = JSON.parse(localStorage.getItem("payments") || "[]");
+  pinError.classList.add("hidden");
+  confirmBtn.disabled = true;
+  confirmBtn.textContent = "Saving...";
 
-  payments.push({
-    id: Date.now(),
-    customerId: customerId,
+  const localId = makeLocalId();
+  const newPayment = {
+    id: localId,
+    synced: false,
+    customer_id: customerId,
     amount: enteredAmount,
-    datePaid: enteredDate,
-    createdAt: new Date().toISOString(),
+    date_paid: enteredDate,
+    created_at: new Date().toISOString()
+  };
+
+  const payments = getLocal("local_payments");
+  payments.push(newPayment);
+  setLocal("local_payments", payments);
+
+  queueChange("create_payment", localId, {
+    customer_id: Number(customerId),
+    amount: enteredAmount,
+    date_paid: enteredDate,
+    client_reference: localId
   });
 
-  localStorage.setItem("payments", JSON.stringify(payments));
+  await syncPendingChanges();
 
   window.location.href = `customer-detail.html?id=${customerId}`;
 });

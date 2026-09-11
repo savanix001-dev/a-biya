@@ -130,3 +130,65 @@ async function syncPendingChanges() {
 
 window.addEventListener("online", syncPendingChanges);
 document.addEventListener("DOMContentLoaded", syncPendingChanges);
+
+// ---- Generic background refresh for loans/payments ----
+
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+async function refreshResourceFromBackend(endpoint, storageKey, attempt = 1) {
+  const token = localStorage.getItem("authToken");
+  if (!token) return;
+
+  const MAX_ATTEMPTS = 3;
+
+  try {
+    const response = await fetch(`${API_BASE_URL}/${endpoint}`, {
+      headers: { "Authorization": `Bearer ${token}` }
+    });
+
+    if (response.status === 401) {
+      localStorage.removeItem("authToken");
+      window.location.href = "login-pin.html";
+      return;
+    }
+
+    if (!response.ok) {
+      if (attempt < MAX_ATTEMPTS) {
+        await sleep(1500);
+        return refreshResourceFromBackend(endpoint, storageKey, attempt + 1);
+      }
+      return;
+    }
+
+    const fresh = await response.json();
+    const freshWithSyncFlag = fresh.map(r => ({ ...r, synced: true }));
+
+    const local = getLocal(storageKey);
+
+    const syncedLocalIds = new Set(
+      fresh.filter(r => r.client_reference).map(r => r.client_reference)
+    );
+
+    const stillUnsyncedLocalOnly = local.filter(
+      r => r.synced === false && !syncedLocalIds.has(r.id)
+    );
+
+    setLocal(storageKey, [...freshWithSyncFlag, ...stillUnsyncedLocalOnly]);
+  } catch (error) {
+    // Offline or unreachable - silently keep showing local data
+  }
+}
+
+function refreshLoansFromBackend() {
+  return refreshResourceFromBackend("loans", "local_loans");
+}
+
+function refreshPaymentsFromBackend() {
+  return refreshResourceFromBackend("payments", "local_payments");
+}
+
+function refreshCustomersGenericFromBackend() {
+  return refreshResourceFromBackend("customers", "local_customers");
+}

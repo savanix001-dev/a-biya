@@ -32,6 +32,7 @@ class LoanCreate(BaseModel):
     item: Optional[str] = None
     date_given: Optional[date] = None
     due_date: Optional[date] = None
+    client_reference: Optional[str] = None
 
 class LoanResponse(BaseModel):
     id: int
@@ -41,6 +42,7 @@ class LoanResponse(BaseModel):
     date_given: Optional[date] = None
     due_date: Optional[date] = None
     created_at: datetime
+    client_reference: Optional[str] = None
 
     class Config:
         from_attributes = True
@@ -55,6 +57,7 @@ class PaymentCreate(BaseModel):
     customer_id: int
     amount: Decimal
     date_paid: Optional[date] = None
+    client_reference: Optional[str] = None
 
 class PaymentResponse(BaseModel):
     id: int
@@ -62,6 +65,7 @@ class PaymentResponse(BaseModel):
     amount: Decimal
     date_paid: Optional[date] = None
     created_at: datetime
+    client_reference: Optional[str] = None
 
     class Config:
         from_attributes = True
