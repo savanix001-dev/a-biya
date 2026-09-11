@@ -7,6 +7,7 @@ class CustomerCreate(BaseModel):
     name: str
     phone: Optional[str] = None
     address: Optional[str] = None
+    client_reference: Optional[str] = None
 
 class CustomerResponse(BaseModel):
     id: int
@@ -15,6 +16,7 @@ class CustomerResponse(BaseModel):
     address: Optional[str] = None
     created_at: datetime
     balance: Decimal = Decimal("0")
+    client_reference: Optional[str] = None
 
     class Config:
         from_attributes = True

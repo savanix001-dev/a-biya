@@ -11,6 +11,7 @@ class Customer(Base):
     phone = Column(String, nullable=True)
     address = Column(String, nullable=True)
     owner_id = Column(Integer, ForeignKey("business_owners.id"), nullable=True)
+    client_reference = Column(String, nullable=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
     loans = relationship("Loan", back_populates="customer")

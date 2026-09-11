@@ -1,26 +1,3 @@
-function getCustomers() {
-  const data = localStorage.getItem("customers");
-  return data ? JSON.parse(data) : [];
-}
-
-function getLoans() {
-  const data = localStorage.getItem("loans");
-  return data ? JSON.parse(data) : [];
-}
-
-function getPayments() {
-  const data = localStorage.getItem("payments");
-  return data ? JSON.parse(data) : [];
-}
-
-function getCustomerBalance(customerId) {
-  const loans = getLoans().filter((l) => String(l.customerId) === String(customerId));
-  const payments = getPayments().filter((p) => String(p.customerId) === String(customerId));
-  const totalLoaned = loans.reduce((sum, l) => sum + Number(l.amount), 0);
-  const totalPaid = payments.reduce((sum, p) => sum + Number(p.amount), 0);
-  return totalLoaned - totalPaid;
-}
-
 const urlParams = new URLSearchParams(window.location.search);
 const action = urlParams.get("action");
 
@@ -36,7 +13,7 @@ if (action === "addLoan") {
 function renderCustomers(filter = "") {
   const list = document.getElementById("customerList");
   const emptyMsg = document.getElementById("emptyMsg");
-  const customers = getCustomers();
+  const customers = getLocal("local_customers");
 
   const filtered = customers.filter((c) => {
     const term = filter.toLowerCase();
@@ -55,7 +32,7 @@ function renderCustomers(filter = "") {
   }
 
   filtered.forEach((c) => {
-    const balance = getCustomerBalance(c.id);
+    const balance = Number(c.balance || 0);
     const card = document.createElement("a");
 
     if (action === "addLoan") {
@@ -69,7 +46,7 @@ function renderCustomers(filter = "") {
     card.className = "block bg-white rounded-xl shadow p-4 flex justify-between items-center";
     card.innerHTML = `
       <div>
-        <p class="font-semibold text-opay-navy">${c.name}</p>
+        <p class="font-semibold text-opay-navy">${c.name}${c.synced === false ? " (syncing...)" : ""}</p>
         <p class="text-sm text-gray-500">${c.phone || "No phone"}</p>
       </div>
       <p class="font-bold text-opay-navy">₦${balance.toLocaleString()}</p>
@@ -78,8 +55,64 @@ function renderCustomers(filter = "") {
   });
 }
 
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+function showSyncError() {
+  const banner = document.getElementById("syncErrorBanner");
+  if (banner) banner.classList.remove("hidden");
+}
+
+async function refreshFromBackend(attempt = 1) {
+  const token = localStorage.getItem("authToken");
+  if (!token) return;
+
+  const MAX_ATTEMPTS = 3;
+
+  try {
+    const response = await fetch(`${API_BASE_URL}/customers`, {
+      headers: { "Authorization": `Bearer ${token}` }
+    });
+
+    if (response.status === 401) {
+      localStorage.removeItem("authToken");
+      window.location.href = "login-pin.html";
+      return;
+    }
+
+    if (!response.ok) {
+      if (attempt < MAX_ATTEMPTS) {
+        await sleep(1500);
+        return refreshFromBackend(attempt + 1);
+      }
+      showSyncError();
+      return;
+    }
+
+    const freshCustomers = await response.json();
+    const freshCustomersWithSyncFlag = freshCustomers.map(c => ({ ...c, synced: true }));
+
+    const local = getLocal("local_customers");
+
+    const syncedLocalIds = new Set(
+      freshCustomers.filter(c => c.client_reference).map(c => c.client_reference)
+    );
+
+    const stillUnsyncedLocalOnly = local.filter(
+      c => c.synced === false && !syncedLocalIds.has(c.id)
+    );
+
+    setLocal("local_customers", [...freshCustomersWithSyncFlag, ...stillUnsyncedLocalOnly]);
+    renderCustomers(document.getElementById("searchInput").value);
+  } catch (error) {
+    // Offline or unreachable - silently keep showing local data
+  }
+}
+
 document.getElementById("searchInput").addEventListener("input", (e) => {
   renderCustomers(e.target.value);
 });
 
 renderCustomers();
+refreshFromBackend();
