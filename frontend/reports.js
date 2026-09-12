@@ -1,21 +1,18 @@
 function getCustomers() {
-  const data = localStorage.getItem("customers");
-  return data ? JSON.parse(data) : [];
+  return getLocal("local_customers");
 }
 
 function getLoans() {
-  const data = localStorage.getItem("loans");
-  return data ? JSON.parse(data) : [];
+  return getLocal("local_loans");
 }
 
 function getPayments() {
-  const data = localStorage.getItem("payments");
-  return data ? JSON.parse(data) : [];
+  return getLocal("local_payments");
 }
 
 function getCustomerBalance(customerId, loans, payments) {
-  const customerLoans = loans.filter((l) => String(l.customerId) === String(customerId));
-  const customerPayments = payments.filter((p) => String(p.customerId) === String(customerId));
+  const customerLoans = loans.filter((l) => String(l.customer_id) === String(customerId));
+  const customerPayments = payments.filter((p) => String(p.customer_id) === String(customerId));
   const totalLoaned = customerLoans.reduce((sum, l) => sum + Number(l.amount), 0);
   const totalPaid = customerPayments.reduce((sum, p) => sum + Number(p.amount), 0);
   return totalLoaned - totalPaid;
@@ -53,9 +50,9 @@ function loadReports() {
     const balance = getCustomerBalance(customer.id, loans, payments);
     if (balance <= 0) return;
 
-    const customerLoans = loans.filter((l) => String(l.customerId) === String(customer.id));
-    const isDueToday = customerLoans.some((loan) => loan.dueDate === today);
-    const isOverdue = customerLoans.some((loan) => loan.dueDate && loan.dueDate < today);
+    const customerLoans = loans.filter((l) => String(l.customer_id) === String(customer.id));
+    const isDueToday = customerLoans.some((loan) => loan.due_date === today);
+    const isOverdue = customerLoans.some((loan) => loan.due_date && loan.due_date < today);
 
     if (isDueToday) dueTodayCustomers.push({ customer, balance });
     if (isOverdue) overdueCustomers.push({ customer, balance });
@@ -99,3 +96,10 @@ function loadReports() {
 }
 
 loadReports();
+
+async function refreshAndReloadReports() {
+  await Promise.all([refreshCustomersGenericFromBackend(), refreshLoansFromBackend(), refreshPaymentsFromBackend()]);
+  loadReports();
+}
+
+refreshAndReloadReports();
